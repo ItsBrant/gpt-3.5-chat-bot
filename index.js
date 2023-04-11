@@ -17,10 +17,7 @@ let status = [
     url: 'https://www.youtube.com/watch?v=bNUKhcIpRGU',
   },
   {
-    name: 'He loves you at your high but me, I loved you at your lowest.',
-  },
-  {
-    name: 'Sky Lounge',
+    name: 'Ian suck at R6 Siege',
     type: ActivityType.Watching,
   },
   {
