@@ -12,16 +12,16 @@ const client = new Client({
 
 let status = [
   {
-    name: 'Witt Lowry',
+    name: 'The Destruction of AMC West Palm Beach',
     type: ActivityType.Streaming,
     url: 'https://www.youtube.com/watch?v=bNUKhcIpRGU',
   },
   {
-    name: 'Ian suck at R6 Siege',
+    name: 'Eric fall down the stairs',
     type: ActivityType.Watching,
   },
   {
-    name: 'Falling in Reverse',
+    name: 'Witt Lowry',
     type: ActivityType.Listening,
   },
 ];
@@ -74,7 +74,34 @@ client.on('messageCreate', async (message) => {
         console.log(`OPENAI ERR: ${error}`);
       });
 
-    message.reply(result.data.choices[0].message);
+      let reply = result.data.choices[0].message?.content;
+
+      try {
+        if (reply?.length > 2000) {
+          // If the reply length is over 2000 characters, send a txt file.
+          const buffer = Buffer.from(reply, 'utf8');
+          const txtFile = new AttachmentBuilder(buffer, { name: `${message.author.tag}_response.txt` });
+      
+          message.reply({ files: [txtFile] }).catch(() => {
+            message.channel.send({ content: `${message.author}`, files: [txtFile] });
+          });
+        } else {
+          message.reply(reply).catch(() => {
+            message.channel.send(`${message.author} ${reply}`);
+          });
+        }
+      } catch (error) {
+        message.reply(`Something went wrong. Try again in a bit.`).then((msg) => {
+          setTimeout(async () => {
+            await msg.delete().catch(() => null);
+          }, 5000);
+        });
+      
+        console.log(`Error: ${error}`);
+      }
+      
+      client.login(process.env.TOKEN);
+      
   } catch (error) {
     console.log(`ERR: ${error}`);
   }
